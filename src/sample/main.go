@@ -1,12 +1,13 @@
 package main
 
 import (
-    "database/sql"
-    "fmt"
-    "github.com/Pallinder/go-randomdata"
-    _ "github.com/go-sql-driver/mysql"
-    "net/http"
-    "os"
+	"database/sql"
+	"fmt"
+	"net/http"
+	"os"
+
+	"github.com/Pallinder/go-randomdata"
+	_ "github.com/go-sql-driver/mysql"
 )
 
 var (
@@ -83,6 +84,7 @@ func addUser() string {
         return err.Error()
     }
     defer db.Close()
+    
 
     stmtIns, err := db.Prepare("INSERT INTO users(name) VALUES(?)")
     if err != nil {
