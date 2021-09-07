@@ -3,6 +3,7 @@ steps:
 # $PROJECT_IDには使用中のプロジェクトIDが自動的に挿入されます
 - name: 'gcr.io/cloud-builders/docker'
   args: ['build', '-f', 'Dockerfile', '--tag=gcr.io/$PROJECT_ID/sample:$_VERSION', '.']
+  
 # 作成したsampleイメージをPUSHする
 - name: 'gcr.io/cloud-builders/docker'
   args: ["push", "gcr.io/$PROJECT_ID/sample:$_VERSION"]
