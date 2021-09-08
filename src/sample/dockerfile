@@ -1,12 +1,16 @@
-FROM golang:1.13
+# Build Server
+FROM golang:latest as builder
+ENV GOBIN /go/bin
+WORKDIR /go/src/github.com/QualiArts/cb-sample-server
+COPY / .
+RUN go test
+RUN GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build
 
-# WORKDIR /go/src/app
-WORKDIR /src/sample
-COPY ./main.go .
+# COPY theserver file to image from builder
+FROM alpine:latest
+WORKDIR /usr/local/bin/
+COPY --from=builder /go/src/github.com/QualiArts/cb-sample-server/cb-sample-server .
 
-RUN go get -d -v github.com/go-sql-driver/mysql
-RUN go get -d -v github.com/Pallinder/go-randomdata
+EXPOSE 8080
 
-RUN go build -o /sample ./main.go
-
-CMD ["/sample"]
+CMD ["/usr/local/bin/cb-sample-server"]
