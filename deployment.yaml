@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: cb-sample-server
-        image: gcr.io/$PROJECT_ID/cb-sample-server:latest
+        image: gcr.io/groovy-bay-273923/cb-sample-server:latest
         ports:
         - containerPort: 8080
           protocol: TCP
