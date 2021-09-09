@@ -17,24 +17,24 @@ steps:
   - --zone=$_ZONE
   - --project=$PROJECT_ID
 # アプリのデプロイ設定
-- name: 'gcr.io/cloud-builders/kubectl:1.21'
+- name: 'gcr.io/cloud-builders/kubectl:latest'
   args:
   - 'apply'
   - '--filename=deployment.yaml'
 # NodePortのサービスを登録する 30580->8080
-- name: 'gcr.io/cloud-builders/kubectl:1.21'
+- name: 'gcr.io/cloud-builders/kubectl:latest'
   args:
   - 'apply'
   - '--filename=service.yaml'
 # イメージをDeploymentにセットする。
-- name: 'gcr.io/cloud-builders/kubectl:1.21'
+- name: 'gcr.io/cloud-builders/kubectl:latest'
   args:
   - 'set'
   - 'image'
   - 'deployment/cb-sample-server'
   - 'cb-sample-server=gcr.io/$PROJECT_ID/cb-sample-server:$_VERSION'
 # デプロイのステータス確認
-- name: 'gcr.io/cloud-builders/kubectl:1.21'
+- name: 'gcr.io/cloud-builders/kubectl:latest'
   args:
   - 'rollout'
   - 'status'
