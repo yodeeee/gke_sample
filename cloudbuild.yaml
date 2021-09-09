@@ -51,6 +51,8 @@ steps:
   - 'rollout'
   - 'status'
   - 'deployment/cb-sample-server'
+  env:
+  - "CLOUDSDK_COMPUTE_REGION=asia-northeast1-a"
   - "CLOUDSDK_COMPUTE_REGION=asia-northeast1-a"
   - "CLOUDSDK_COMPUTE_ZONE=asia-northeast1-a"
   - "CLOUDSDK_CONTAINER_CLUSTER=cb-sample-server"
