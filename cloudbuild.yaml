@@ -22,7 +22,7 @@ steps:
   - 'apply'
   - '--filename=deployment.yaml'
   env:
-  - "CLOUDSDK_COMPUTE_REGION=asia-northeast1"
+  - "CLOUDSDK_COMPUTE_REGION=asia-northeast1-a"
   - "CLOUDSDK_COMPUTE_ZONE=asia-northeast1-a"
   - "CLOUDSDK_CONTAINER_CLUSTER=cb-sample-server"
 # NodePortのサービスを登録する 30580->8080
