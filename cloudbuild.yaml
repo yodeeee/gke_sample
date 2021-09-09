@@ -22,7 +22,7 @@ steps:
   - 'apply'
   - '--filename=deployment.yaml'
   env:
-  - "CLOUDSDK_COMPUTE_REGION=asia-northeast1-a"
+  - "CLOUDSDK_COMPUTE_REGION=asia-northeast1"
   - "CLOUDSDK_COMPUTE_ZONE=asia-northeast1-a"
   - "CLOUDSDK_CONTAINER_CLUSTER=cb-sample-server"
 # NodePortのサービスを登録する 30580->8080
@@ -31,7 +31,7 @@ steps:
   - 'apply'
   - '--filename=service.yaml'
   env:
-  - "CLOUDSDK_COMPUTE_REGION=asia-northeast1-a"
+  - "CLOUDSDK_COMPUTE_REGION=asia-northeast1"
   - "CLOUDSDK_COMPUTE_ZONE=asia-northeast1-a"
   - "CLOUDSDK_CONTAINER_CLUSTER=cb-sample-server"
 # イメージをDeploymentにセットする。
@@ -42,7 +42,7 @@ steps:
   - 'deployment/cb-sample-server'
   - 'cb-sample-server=gcr.io/$PROJECT_ID/cb-sample-server:$_VERSION'
   env:
-  - "CLOUDSDK_COMPUTE_REGION=asia-northeast1-a"
+  - "CLOUDSDK_COMPUTE_REGION=asia-northeast1"
   - "CLOUDSDK_COMPUTE_ZONE=asia-northeast1-a"
   - "CLOUDSDK_CONTAINER_CLUSTER=cb-sample-server"
 # デプロイのステータス確認
@@ -52,6 +52,6 @@ steps:
   - 'status'
   - 'deployment/cb-sample-server'
   env:
-  - "CLOUDSDK_COMPUTE_REGION=asia-northeast1-a"
+  - "CLOUDSDK_COMPUTE_REGION=asia-northeast1"
   - "CLOUDSDK_COMPUTE_ZONE=asia-northeast1-a"
   - "CLOUDSDK_CONTAINER_CLUSTER=cb-sample-server"
