@@ -2,7 +2,7 @@ steps:
 # Dockerfileを利用してアプリのテストビルドとイメージのビルドを行う。$_VERSIONはトリガーの変数として設定します。
 # $PROJECT_IDには使用中のプロジェクトIDが自動的に挿入されます
 - name: 'gcr.io/cloud-builders/docker'
-  args: ['build', '-f', 'Dockerfile', '--tag=gcr.io/$PROJECT_ID/cb-sample-server:$_VERSION', '.']
+  args: ['build', '-f', './src/sample/Dockerfile', '--tag=gcr.io/$PROJECT_ID/cb-sample-server:$_VERSION', '.']
 # 作成したcb-sample-serverイメージをPUSHする
 - name: 'gcr.io/cloud-builders/docker'
   args: ["push", "gcr.io/$PROJECT_ID/cb-sample-server:$_VERSION"]
