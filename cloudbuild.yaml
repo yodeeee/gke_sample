@@ -22,9 +22,9 @@ steps:
   - 'apply'
   - '--filename=deployment.yaml'
   env:
-  - "CLOUDSDK_COMPUTE_REGION=<cluster region> (regional clusters)"
-  - "CLOUDSDK_COMPUTE_ZONE=<cluster zone>"
-  - "CLOUDSDK_CONTAINER_CLUSTER=<cluster name>"
+  - "CLOUDSDK_COMPUTE_REGION=$CLOUDSDK_COMPUTE_REGION"
+  - "CLOUDSDK_COMPUTE_ZONE=$CLOUDSDK_COMPUTE_ZONE"
+  - "CLOUDSDK_CONTAINER_CLUSTER=$CLOUDSDK_CONTAINER_CLUSTER"
 # NodePortのサービスを登録する 30580->8080
 - name: 'gcr.io/cloud-builders/kubectl:latest'
   args:
