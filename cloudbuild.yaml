@@ -4,10 +4,11 @@ steps:
 - id: policy-test
   name: instrumenta/conftest:${_CONFTEST_VERSION}
   entrypoint: '/bin/sh'
-  args: [ '-c', "conftest test --no-color --combine --output=stdout --policy .conftest/sample.rego *.yaml" ]
+  # args: [ '-c', "conftest test --no-color --combine --output=stdout --policy .policy/sample.rego *.yaml" ]
+  args: [ '-c', "conftest test deployment.yaml" ]
   # waitFor: [ 'policy-parse' ]
   timeout: 60s
-  
+
 - name: 'gcr.io/cloud-builders/docker'
   args: ['build', '-f', 'Dockerfile', '--tag=gcr.io/$PROJECT_ID/cb-sample-server:$_VERSION', '.']
 # 作成したcb-sample-serverイメージをPUSHする
