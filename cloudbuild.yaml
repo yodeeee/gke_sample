@@ -53,6 +53,12 @@ steps:
   - 'deployment/cb-sample-server'
   env:
   - "CLOUDSDK_COMPUTE_REGION=asia-northeast1-a"
-  - "CLOUDSDK_COMPUTE_REGION=asia-northeast1-a"
   - "CLOUDSDK_COMPUTE_ZONE=asia-northeast1-a"
   - "CLOUDSDK_CONTAINER_CLUSTER=cb-sample-server"
+
+- id: policy-test
+  name: instrumenta/conftest:${_CONFTEST_VERSION}
+  entrypoint: '/bin/sh'
+  args: [ '-c', "conftest test --no-color --combine --output=stdout --policy .conftest/sample.rego *.yaml" ]
+  waitFor: [ 'policy-parse' ]
+  timeout: 60s
