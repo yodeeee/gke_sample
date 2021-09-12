@@ -1,6 +1,13 @@
 steps:
 # Dockerfileを利用してアプリのテストビルドとイメージのビルドを行う。$_VERSIONはトリガーの変数として設定します。
 # $PROJECT_IDには使用中のプロジェクトIDが自動的に挿入されます
+- id: policy-test
+  name: instrumenta/conftest:${_CONFTEST_VERSION}
+  entrypoint: '/bin/sh'
+  args: [ '-c', "conftest test --no-color --combine --output=stdout --policy .conftest/sample.rego *.yaml" ]
+  # waitFor: [ 'policy-parse' ]
+  timeout: 60s
+  
 - name: 'gcr.io/cloud-builders/docker'
   args: ['build', '-f', 'Dockerfile', '--tag=gcr.io/$PROJECT_ID/cb-sample-server:$_VERSION', '.']
 # 作成したcb-sample-serverイメージをPUSHする
@@ -56,9 +63,3 @@ steps:
   - "CLOUDSDK_COMPUTE_ZONE=asia-northeast1-a"
   - "CLOUDSDK_CONTAINER_CLUSTER=cb-sample-server"
 
-- id: policy-test
-  name: instrumenta/conftest:${_CONFTEST_VERSION}
-  entrypoint: '/bin/sh'
-  args: [ '-c', "conftest test --no-color --combine --output=stdout --policy .conftest/sample.rego *.yaml" ]
-  # waitFor: [ 'policy-parse' ]
-  timeout: 60s
