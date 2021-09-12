@@ -60,5 +60,5 @@ steps:
   name: instrumenta/conftest:${_CONFTEST_VERSION}
   entrypoint: '/bin/sh'
   args: [ '-c', "conftest test --no-color --combine --output=stdout --policy .conftest/sample.rego *.yaml" ]
-  waitFor: [ 'policy-parse' ]
+  # waitFor: [ 'policy-parse' ]
   timeout: 60s
