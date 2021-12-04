@@ -8,7 +8,7 @@ steps:
   # args: [ '-c', "conftest test --no-color --combine --output=stdout --policy .policy/sample.rego *.yaml" ]
   args: [ '-c', "conftest test --policy ./policy/sample.rego *.yaml" ]
   # waitFor: [ 'policy-parse' ]
-  timeout: 60s
+  timeout: 300s
 
 - name: 'gcr.io/cloud-builders/docker'
   args: ['build', '-f', 'Dockerfile', '--tag=gcr.io/$PROJECT_ID/cb-sample-server:$_VERSION', '.']
