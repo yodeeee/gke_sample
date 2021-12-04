@@ -86,7 +86,7 @@ func addUser() string {
     defer db.Close()
     
 
-    stmtIns, err := db.Prepare("INSERT INTO users(name) VALUES(?)")
+    stmtIns, err := db.Prepare("INSERT INTO users(name) VALUES(?)!")
     if err != nil {
         return err.Error()
     }
