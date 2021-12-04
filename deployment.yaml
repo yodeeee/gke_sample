@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: cb-sample-server
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       name: cb-sample-server
@@ -16,6 +16,7 @@ spec:
       containers:
       - name: cb-sample-server
         image: gcr.io/groovy-bay-273923/cb-sample-server:latest
+        # image: sample:1.0
         ports:
         - containerPort: 8080
           protocol: TCP

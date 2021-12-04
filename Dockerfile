@@ -9,8 +9,8 @@ COPY go.sum ./
 RUN go mod download
 COPY *.go ./
 
-RUN go build -o /sample
-CMD [ "/sample" ]
+RUN go build -o /cb-sample-server
+CMD [ "/cb-sample-server" ]
 # Build Server
 
 # FROM golang:latest as builder
