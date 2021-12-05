@@ -1,121 +1,125 @@
 package main
 
 import (
+	"context"
 	"fmt"
-	"net/http"
-	"os"
+	"io"
+	"log"
 
-	"github.com/labstack/echo/v4"
-	"github.com/labstack/echo/v4/middleware"
+	"cloud.google.com/go/spanner"
+	database "cloud.google.com/go/spanner/admin/database/apiv1"
+	"google.golang.org/api/iterator"
 )
 
-// var (
-//     dbuser   string
-//     dbpass   string
-//     dbhost   string
-//     dbport   string
-//     dbname   string
-//     hostname string
-// )
-
-// func rootHandler(w http.ResponseWriter, r *http.Request) {
-//     fmt.Fprintf(w, "/ is requested")
-// }
-
-// func getUserHandler(w http.ResponseWriter, r *http.Request) {
-//     id, name := getUser()
-//     fmt.Fprintf(w, fmt.Sprintf("%s: name is [%d %s]\n", hostname, id, name))
-//     fmt.Printf(fmt.Sprintf("%s: name is [%d %s]\n", hostname, id, name))
-
-// }
-
-// func addUserHandler(w http.ResponseWriter, r *http.Request) {
-//     name := addUser()
-//     fmt.Fprintf(w, fmt.Sprintf("%s: added user [%s]\n", hostname, name))
-//     fmt.Printf(fmt.Sprintf("%s: added user [%s]\n", hostname, name))
-
-// }
-
 func main() {
-    fmt.Println("Hello, world.")
-	e := echo.New()
 
-	e.Use(middleware.Logger())
-	e.Use(middleware.Recover())
+	ctx := context.Background()
 
-	e.GET("/", func(c echo.Context) error {
-		return c.HTML(http.StatusOK, "Hello, Docker! <3")
-	})
+	// This database must exist.
+	databaseName := "projects/test-project/instances/test-instance/databases/test-database"
 
-	e.GET("/ping", func(c echo.Context) error {
-		return c.JSON(http.StatusOK, struct{ Status string }{Status: "OK"})
-	})
+	client, err := spanner.NewClient(ctx, databaseName)
+ 
+	if err != nil {
+		log.Fatalf("Failed to create client %v", err)
+	}
+	defer client.Close()
 
-	httpPort := os.Getenv("HTTP_PORT")
-	if httpPort == "" {
-		httpPort = "8080"
+	stmt := spanner.Statement{SQL: "SELECT 1"}
+	iter := client.Single().Query(ctx, stmt)
+	defer iter.Stop()
+
+	for {
+		row, err := iter.Next()
+		if err == iterator.Done {
+			fmt.Println("Done")
+			return
+		}
+		if err != nil {
+			log.Fatalf("Query failed with %v", err)
+		}
+
+		var i int64
+		if row.Columns(&i) != nil {
+			log.Fatalf("Failed to parse row %v", err)
+		}
+		fmt.Printf("Got value %v\n", i)
 	}
 
-	e.Logger.Fatal(e.Start(":" + httpPort))
+	// e := echo.New()
+
+	// e.Use(middleware.Logger())
+	// e.Use(middleware.Recover())
+
+
+	// e.GET("/", func(c echo.Context) error {
+	// 	return c.HTML(http.StatusOK, "Hello, Docker! <3")
+	// })
+
+	// e.GET("/ping", func(c echo.Context) error {
+	// 	return c.JSON(http.StatusOK, struct{ Status string }{Status: "OK"})
+	// })
+
+	// httpPort := os.Getenv("HTTP_PORT")
+	// if httpPort == "" {
+	// 	httpPort = "8080"
+	// }
+
+	// e.Logger.Fatal(e.Start(":" + httpPort))
     // getFromEnv()
     // http.HandleFunc("/", rootHandler)
     // http.HandleFunc("/getuser", getUserHandler)
     // http.HandleFunc("/adduser", addUserHandler)
     // http.ListenAndServe(":8080", nil)
+
+
+    // defer adminClient.Close()
+	// defer dataClient.Close()
+	// if err := run(ctx, adminClient, dataClient, os.Stdout, cmd, db); err != nil {
+	// 	os.Exit(1)
+    // }
 }
 
-// func getFromEnv() {
-//     dbuser = os.Getenv("DBUSER")
-//     dbpass = os.Getenv("DBPASS")
-//     dbhost = os.Getenv("DBHOST")
-//     dbport = os.Getenv("DBPORT")
-//     dbname = os.Getenv("DBNAME")
-//     hostname, _ = os.Hostname()
-// }
+func read(w io.Writer, db string) error {
+    ctx := context.Background()
+    client, err := spanner.NewClient(ctx, db)
+    if err != nil {
+            return err
+    }
+    defer client.Close()
 
-// func getUser() (int, string) {
-//     db, err := sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", dbuser, dbpass, dbhost, dbport, dbname))
-//     if err != nil {
-//         panic(err.Error())
-//     }
-//     defer db.Close()
+    iter := client.Single().Read(ctx, "Albums", spanner.AllKeys(),
+            []string{"SingerId", "AlbumId", "AlbumTitle"})
+    defer iter.Stop()
+    for {
+            row, err := iter.Next()
+            if err == iterator.Done {
+                    return nil
+            }
+            if err != nil {
+                    return err
+            }
+            var singerID, albumID int64
+            var albumTitle string
+            if err := row.Columns(&singerID, &albumID, &albumTitle); err != nil {
+                    return err
+            }
+            fmt.Fprintf(w, "%d %d %s\n", singerID, albumID, albumTitle)
+    }
+}
 
-//     stmtOut, err := db.Prepare("SELECT id,name FROM users ORDER BY RAND() LIMIT 1;")
-//     if err != nil {
-//         panic(err.Error())
-//     }
-//     defer stmtOut.Close()
 
-//     var name string
-//     var id int
 
-//     err = stmtOut.QueryRow().Scan(&id, &name)
-//     if err != nil {
-//         panic(err.Error())
-//     }
+func createClients(ctx context.Context, db string) (*database.DatabaseAdminClient, *spanner.Client) {
+	adminClient, err := database.NewDatabaseAdminClient(ctx)
+	if err != nil {
+		log.Fatal(err)
+	}
 
-//     return id, name
-// }
+	dataClient, err := spanner.NewClient(ctx, db)
+	if err != nil {
+		log.Fatal(err)
+	}
 
-// func addUser() string {
-//     db, err := sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", dbuser, dbpass, dbhost, dbport, dbname))
-//     if err != nil {
-//         return err.Error()
-//     }
-//     defer db.Close()
-    
-
-//     stmtIns, err := db.Prepare("INSERT INTO users(name) VALUES(?)!")
-//     if err != nil {
-//         return err.Error()
-//     }
-//     defer stmtIns.Close()
-
-//     name := randomdata.SillyName()
-//     _, err = stmtIns.Exec(name)
-//     if err != nil {
-//         return err.Error()
-//     }
-
-//     return name
-// }
+	return adminClient, dataClient
+}
